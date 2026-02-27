@@ -13,8 +13,9 @@ struct SerialConfig
     QSerialPort :: StopBits stopBits;
 };
 
-class SerialCommunication
+class SerialCommunication : public QObject
 {
+    Q_OBJECT
 public:
     explicit SerialCommunication(QObject *parent = nullptr);
 
