@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 #include <QSerialPortInfo>
 #include <QSerialPort>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -21,32 +22,14 @@ MainWindow::MainWindow(QWidget *parent)
         ui->cbComPort->setEnabled(true);
     });
     // connect(serial, &SerialCommunication :: dataReived, this, &Mainwindow :: onDataReceived);
-    on_pbReloadPorts_clicked();
-    themeSelection();
-    coloruI();
+    on_pbRefresh_clicked();
+    // themeSelection(); will be added
+    // coloruI(); will be added
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void:: MainWindow::on_pbConnect_clicked()
-{
-    if(!serialCom->isConnected())
-    {
-        SerialConfig cfg;
-        cfg.portName = ui->cbComPort->currentData() .toString();
-        cfg.baudeRate = ui->cbBaudRate->currentData().toInt();
-        cfg.dataBits = QSerialPort::Data8;
-        cfg.parity = QSerialPort::NoParity;
-        cfg.stopBits = QSerialPort::OneStop;
-        serialCom->connectPort(cfg);
-    }
-    else
-    {
-        serialCom->disconnectPort();
-    }
 }
 
 void MainWindow::baudRates()
@@ -60,3 +43,50 @@ void MainWindow::baudRates()
     ui->cbBaudRate->addItem("115200", QSerialPort :: Baud115200);
     ui->cbBaudRate->setCurrentIndex(6);
 }
+
+// void MainWindow::on_pbReloadPorts_clicked()
+// {
+// }
+
+void MainWindow::onSerialConnected()
+{
+    // ui->cmComport->setEnabled(true);
+}
+
+void MainWindow::onSerialError(const QString &msg)
+{
+    QMessageBox::critical(this, "Serial Error", msg);
+}
+
+
+void MainWindow::on_pbConnect_clicked()
+{
+        if(!serialCom->isConnected())
+        {
+            SerialConfig cfg;
+            cfg.portName = ui->cbComPort->currentData() .toString();
+            cfg.baudeRate = ui->cbBaudRate->currentData().toInt();
+            cfg.dataBits = QSerialPort::Data8;
+            cfg.parity = QSerialPort::NoParity;
+            cfg.stopBits = QSerialPort::OneStop;
+            serialCom->connectPort(cfg);
+        }
+        else
+        {
+            serialCom->disconnectPort();
+        }
+}
+
+
+void MainWindow::on_pbRefresh_clicked()
+{
+        ui->cbComPort->clear();
+        const auto ports = QSerialPortInfo :: availablePorts();
+        for (const QSerialPortInfo &port : ports) {
+            QString portName = port.portName();
+            QString description = port.description();
+            QString fullName = portName + " - "+ description;
+            ui->cbComPort->addItem(fullName, portName);
+        }
+}
+

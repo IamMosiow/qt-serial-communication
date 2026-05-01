@@ -26,7 +26,7 @@ private:
 
     void baudRates() ;
     SerialCommunication *serialCom;
-    void onSerialConnected() ;
+    void onSerialConnected();
     void onSerialError(const QString &msg);
     void themeSelection();
     void loadStyleSheet(const QString &path);
@@ -34,13 +34,10 @@ private:
 
 private slots:
 
+    // void on_pbConnect_clicked();
+    // void on_pbReloadPorts_clicked();
+
     void on_pbConnect_clicked();
-    void on_pbReloadPorts_clicked();
-    void on_pbPedConnect_clicked();
-    void on_pbPedTurnOnAzi_clicked();
-    void on_pb60_clicked();
-    void on_pb180_clicked();
-
-
+    void on_pbRefresh_clicked();
 };
 #endif // MAINWINDOW_H

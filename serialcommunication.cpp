@@ -34,3 +34,19 @@ void SerialCommunication::disconnectPort()
         emit disconnected();
     }
 }
+
+bool SerialCommunication :: isConnected() const
+{
+    return serial. isOpen();
+}
+
+void SerialCommunication :: sendCommand(const QByteArray &cmd)
+{
+    if(!serial.isOpen())
+    {
+        emit error("Serial not connected!");
+        return;
+    }
+    qDebug() << cmd;
+    serial.write(cmd);
+}
