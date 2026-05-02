@@ -6,67 +6,56 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>468</width>
+    <height>186</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pbConnect">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>0</y>
-      <width>80</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Connect</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pbRefresh">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>30</y>
-      <width>80</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Refresh</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbComPort">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>80</y>
-      <width>65</width>
-      <height>24</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbBaudRate">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>110</y>
-      <width>65</width>
-      <height>24</height>
-     </rect>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="pbConnect">
+      <property name="text">
+       <string>Connect</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="pbRefresh">
+      <property name="text">
+       <string>Refresh</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QComboBox" name="cbComPort"/>
+    </item>
+    <item row="0" column="3">
+     <widget class="QComboBox" name="cbBaudRate"/>
+    </item>
+    <item row="1" column="0" colspan="3">
+     <widget class="QLineEdit" name="lineEdit"/>
+    </item>
+    <item row="1" column="3">
+     <widget class="QPushButton" name="pbSend">
+      <property name="text">
+       <string>Send</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="4">
+     <widget class="QPlainTextEdit" name="plainTextEdit"/>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>468</width>
      <height>21</height>
     </rect>
    </property>
