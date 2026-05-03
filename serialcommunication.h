@@ -29,6 +29,7 @@ signals:
     void connected();
     void disconnected();
     void error(const QString &msg);
+    void dataReceived(const QByteArray &data);
 private:
 
     QSerialPort serial;
