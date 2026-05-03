@@ -51,6 +51,7 @@ void MainWindow::baudRates()
 void MainWindow::onSerialConnected()
 {
     // ui->cmComport->setEnabled(true);
+    qDebug() << "Serial connected!";
 }
 
 void MainWindow::onSerialError(const QString &msg)

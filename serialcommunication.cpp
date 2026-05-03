@@ -4,6 +4,13 @@
 SerialCommunication :: SerialCommunication(QObject *parent)
     : QObject(parent)
 {
+    connect(&serial, &QSerialPort::readyRead, this, &SerialCommunication::onReadyRead);
+    connect(&serial, &QSerialPort::errorOccurred, this,
+            [this](QSerialPort::SerialPortError error)
+            {
+                if (error != QSerialPort::NoError)
+                    emit this->error(serial.errorString());
+            });
 }
 
 void SerialCommunication :: connectPort(const SerialConfig &config)
@@ -49,4 +56,11 @@ void SerialCommunication :: sendCommand(const QByteArray &cmd)
     }
     qDebug() << cmd;
     serial.write(cmd);
+}
+
+void SerialCommunication::onReadyRead()
+{
+    QByteArray data = serial.readAll();
+    qDebug() << "Received: " << data;
+    // must be added to ui as well
 }

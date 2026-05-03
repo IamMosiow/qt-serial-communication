@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>468</width>
-    <height>186</height>
+    <height>191</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@
      <widget class="QComboBox" name="cbBaudRate"/>
     </item>
     <item row="1" column="0" colspan="3">
-     <widget class="QLineEdit" name="lineEdit"/>
+     <widget class="QLineEdit" name="sentData"/>
     </item>
     <item row="1" column="3">
      <widget class="QPushButton" name="pbSend">
@@ -46,7 +46,7 @@
      </widget>
     </item>
     <item row="2" column="0" colspan="4">
-     <widget class="QPlainTextEdit" name="plainTextEdit"/>
+     <widget class="QPlainTextEdit" name="receivedData"/>
     </item>
    </layout>
   </widget>
