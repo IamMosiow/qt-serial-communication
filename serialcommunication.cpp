@@ -47,20 +47,17 @@ bool SerialCommunication :: isConnected() const
     return serial. isOpen();
 }
 
-void SerialCommunication :: sendCommand(const QByteArray &cmd)
+void SerialCommunication::sendCommand(const QByteArray &cmd)
 {
-    if(!serial.isOpen())
+    if (serial.isOpen())
     {
-        emit error("Serial not connected!");
-        return;
+        serial.write(cmd);
     }
-    qDebug() << cmd;
-    serial.write(cmd);
 }
 
 void SerialCommunication::onReadyRead()
 {
     QByteArray data = serial.readAll();
     qDebug() << "Received: " << data;
-    // must be added to ui as well
+    emit dataReceived(data);
 }
