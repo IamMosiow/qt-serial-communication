@@ -32,6 +32,8 @@ private:
     void loadStyleSheet(const QString &path);
     void coloruI();
 
+    void initConnections();
+
 private slots:
 
     // void on_pbConnect_clicked();

@@ -11,6 +11,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     serialCom = new SerialCommunication(this);
     baudRates();
+    initConnections();
+
+    on_pbRefresh_clicked();
+    // themeSelection(); will be added
+    // coloruI(); will be added
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::initConnections()
+{
     connect(serialCom, &SerialCommunication :: connected, this, &MainWindow :: onSerialConnected) ;//neede
     connect(serialCom, &SerialCommunication :: error, this, &MainWindow :: onSerialError);
     connect(serialCom, &SerialCommunication :: connected, this, [this](){
@@ -21,15 +35,13 @@ MainWindow::MainWindow(QWidget *parent)
         ui->pbConnect->setText("Connect");
         ui->cbComPort->setEnabled(true);
     });
-    // connect(serial, &SerialCommunication :: dataReived, this, &Mainwindow :: onDataReceived);
-    on_pbRefresh_clicked();
-    // themeSelection(); will be added
-    // coloruI(); will be added
-}
+    connect(serialCom, &SerialCommunication::dataReceived,
+            this, [this](const QByteArray &data)
+            {
+                qDebug() << "Data received:" << data;
 
-MainWindow::~MainWindow()
-{
-    delete ui;
+                ui->ptereceivedData->setPlainText(QString::fromUtf8(data));
+            });
 }
 
 void MainWindow::baudRates()

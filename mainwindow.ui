@@ -36,7 +36,7 @@
      <widget class="QComboBox" name="cbBaudRate"/>
     </item>
     <item row="1" column="0" colspan="3">
-     <widget class="QLineEdit" name="sentData"/>
+     <widget class="QLineEdit" name="lesentData"/>
     </item>
     <item row="1" column="3">
      <widget class="QPushButton" name="pbSend">
@@ -46,7 +46,7 @@
      </widget>
     </item>
     <item row="2" column="0" colspan="4">
-     <widget class="QPlainTextEdit" name="receivedData"/>
+     <widget class="QPlainTextEdit" name="ptereceivedData"/>
     </item>
    </layout>
   </widget>
