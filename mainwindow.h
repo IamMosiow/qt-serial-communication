@@ -41,5 +41,6 @@ private slots:
 
     void on_pbConnect_clicked();
     void on_pbRefresh_clicked();
+    void on_pbSend_clicked();
 };
 #endif // MAINWINDOW_H

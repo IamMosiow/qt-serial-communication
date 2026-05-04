@@ -40,7 +40,7 @@ void MainWindow::initConnections()
             {
                 qDebug() << "Data received:" << data;
 
-                ui->ptereceivedData->setPlainText(QString::fromUtf8(data));
+                ui->pteReceivedData->setPlainText(QString::fromUtf8(data));
             });
 }
 
@@ -101,5 +101,11 @@ void MainWindow::on_pbRefresh_clicked()
             QString fullName = portName + " - "+ description;
             ui->cbComPort->addItem(fullName, portName);
         }
+}
+
+
+void MainWindow::on_pbSend_clicked()
+{
+    serialCom->sendCommand(ui->leInputData->text().toUtf8());
 }
 
