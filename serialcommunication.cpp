@@ -44,7 +44,7 @@ void SerialCommunication::disconnectPort()
 
 bool SerialCommunication :: isConnected() const
 {
-    return serial. isOpen();
+    return serial.isOpen();
 }
 
 void SerialCommunication::sendCommand(const QByteArray &cmd)

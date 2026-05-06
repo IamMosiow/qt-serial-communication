@@ -62,7 +62,6 @@ void MainWindow::baudRates()
 
 void MainWindow::onSerialConnected()
 {
-    // ui->cmComport->setEnabled(true);
     qDebug() << "Serial connected!";
 }
 
@@ -83,10 +82,21 @@ void MainWindow::on_pbConnect_clicked()
             cfg.parity = QSerialPort::NoParity;
             cfg.stopBits = QSerialPort::OneStop;
             serialCom->connectPort(cfg);
+
+            ui->pbClear->setEnabled(true);
+            ui->pbSend->setEnabled(true);
+            ui->leInputData->setEnabled(true);
+            ui->pteReceivedData->setEnabled(true);
         }
         else
         {
             serialCom->disconnectPort();
+
+            ui->pbClear->setEnabled(false);
+            ui->pbSend->setEnabled(false);
+            ui->leInputData->setEnabled(false);
+            ui->pteReceivedData->setEnabled(false);
+
         }
 }
 
