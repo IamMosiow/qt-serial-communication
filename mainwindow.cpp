@@ -135,6 +135,6 @@ void MainWindow::on_pbSend_clicked()
 
 void MainWindow::on_pbClear_clicked()
 {
-
+    ui->pteReceivedData->clear();
 }
 
