@@ -40,7 +40,13 @@ void MainWindow::initConnections()
             {
                 qDebug() << "Data received:" << data;
 
-                ui->pteReceivedData->setPlainText(QString::fromUtf8(data));
+                if(ui->rbASCII->isChecked())
+                    ui->pteReceivedData->setPlainText(QString::fromUtf8(data));
+                else
+                {
+                    QString text = data.toHex(' ').toUpper();
+                    ui->pteReceivedData->setPlainText(text);
+                }
             });
 }
 
@@ -126,7 +132,6 @@ void MainWindow::on_pbSend_clicked()
         serialCom->sendCommand(data);
     }
 }
-
 
 void MainWindow::on_pbClear_clicked()
 {
