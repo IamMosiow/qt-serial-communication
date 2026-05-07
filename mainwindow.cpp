@@ -116,6 +116,20 @@ void MainWindow::on_pbRefresh_clicked()
 
 void MainWindow::on_pbSend_clicked()
 {
-    serialCom->sendCommand(ui->leInputData->text().toUtf8());
+    if(ui->rbASCII->isChecked())
+        serialCom->sendCommand(ui->leInputData->text().toUtf8());
+    else
+    {
+        QByteArray data = QByteArray::fromHex(
+            ui->leInputData->text().toUtf8()
+            );
+        serialCom->sendCommand(data);
+    }
+}
+
+
+void MainWindow::on_pbClear_clicked()
+{
+
 }
 
