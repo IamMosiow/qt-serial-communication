@@ -3,6 +3,8 @@
 #include <QSerialPortInfo>
 #include <QSerialPort>
 #include <QMessageBox>
+#include <QFile>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
