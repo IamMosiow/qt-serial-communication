@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     initConnections();
 
     on_pbRefresh_clicked();
+    loadStyleSheet("styles/Aqua.qss");
     // themeSelection(); will be added
     // coloruI(); will be added
 }
@@ -76,6 +77,24 @@ void MainWindow::onSerialConnected()
 void MainWindow::onSerialError(const QString &msg)
 {
     QMessageBox::critical(this, "Serial Error", msg);
+}
+
+void MainWindow::loadStyleSheet(const QString &path)
+{
+    QFile file(path);
+
+    if (!file.open(QFile::ReadOnly | QFile::Text))
+    {
+        qDebug() << "Could not open stylesheet file";
+        return;
+    }
+
+    QTextStream stream(&file);
+    QString styleSheet = stream.readAll();
+
+    qApp->setStyleSheet(styleSheet);
+
+    file.close();
 }
 
 
