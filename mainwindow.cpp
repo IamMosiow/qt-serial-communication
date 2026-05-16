@@ -51,6 +51,10 @@ void MainWindow::initConnections()
                     ui->pteReceivedData->setPlainText(text);
                 }
             });
+
+    ui->cbStopBit->addItem("One-Bit", QSerialPort ::OneStop);
+    ui->cbStopBit->addItem("Two-Bit",QSerialPort::TwoStop);
+
 }
 
 void MainWindow::baudRates()
@@ -107,7 +111,7 @@ void MainWindow::on_pbConnect_clicked()
             cfg.baudeRate = ui->cbBaudRate->currentData().toInt();
             cfg.dataBits = QSerialPort::Data8;
             cfg.parity = QSerialPort::NoParity;
-            cfg.stopBits = QSerialPort::OneStop;
+            cfg.stopBits = ui->cbStopBit->currentData().value<QSerialPort::StopBits>();
             serialCom->connectPort(cfg);
 
             ui->pbClear->setEnabled(true);
