@@ -55,6 +55,13 @@ void MainWindow::initConnections()
     ui->cbStopBit->addItem("One-Bit", QSerialPort ::OneStop);
     ui->cbStopBit->addItem("Two-Bit",QSerialPort::TwoStop);
 
+    ui->cbParity->addItem("NoParity",QSerialPort::NoParity);
+    ui->cbParity->addItem("EvenParity",QSerialPort::EvenParity);
+    ui->cbParity->addItem("MarkParity",QSerialPort::MarkParity);
+    ui->cbParity->addItem("OddParity",QSerialPort::OddParity);
+    ui->cbParity->addItem("SpaceParity",QSerialPort::SpaceParity);
+
+
 }
 
 void MainWindow::baudRates()
@@ -110,7 +117,7 @@ void MainWindow::on_pbConnect_clicked()
             cfg.portName = ui->cbComPort->currentData() .toString();
             cfg.baudeRate = ui->cbBaudRate->currentData().toInt();
             cfg.dataBits = QSerialPort::Data8;
-            cfg.parity = QSerialPort::NoParity;
+            cfg.parity = ui->cbParity->currentData().value<QSerialPort::Parity>();;
             cfg.stopBits = ui->cbStopBit->currentData().value<QSerialPort::StopBits>();
             serialCom->connectPort(cfg);
 
