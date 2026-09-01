@@ -1,63 +1,161 @@
-#include "serialcommunication.h"
+#include "mainwindow.h"
+#include "./ui_mainwindow.h"
+#include <QSerialPortInfo>
+#include <QSerialPort>
+#include <QMessageBox>
+#include <QFile>
+#include <QTextStream>
 #include <QDebug>
 
-SerialCommunication :: SerialCommunication(QObject *parent)
-    : QObject(parent)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
-    connect(&serial, &QSerialPort::readyRead, this, &SerialCommunication::onReadyRead);
-    connect(&serial, &QSerialPort::errorOccurred, this,
-            [this](QSerialPort::SerialPortError error)
+    ui->setupUi(this);
+    serialCom = new SerialCommunication(this);
+    baudRates();
+    initConnections();
+
+    on_pbRefresh_clicked();
+    loadStyleSheet("styles/Aqua.qss");
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::initConnections()
+{
+    connect(serialCom, &SerialCommunication::connected, this, &MainWindow::onSerialConnected);
+    connect(serialCom, &SerialCommunication::error, this, &MainWindow::onSerialError);
+
+    connect(serialCom, &SerialCommunication::connected, this, [this](){
+        ui->pbConnect->setText("Disconnect");
+        ui->cbComPort->setEnabled(false);
+        ui->cbBaudRate->setEnabled(false);
+        ui->cbParity->setEnabled(false);
+        ui->cbStopBit->setEnabled(false);
+
+        ui->pbClear->setEnabled(true);
+        ui->pbSend->setEnabled(true);
+        ui->leInputData->setEnabled(true);
+        ui->pteReceivedData->setEnabled(true);
+    });
+
+    connect(serialCom, &SerialCommunication::disconnected, this, [this](){
+        ui->pbConnect->setText("Connect");
+        ui->cbComPort->setEnabled(true);
+        ui->cbBaudRate->setEnabled(true);
+        ui->cbParity->setEnabled(true);
+        ui->cbStopBit->setEnabled(true);
+
+        ui->pbClear->setEnabled(false);
+        ui->pbSend->setEnabled(false);
+        ui->leInputData->setEnabled(false);
+        ui->pteReceivedData->setEnabled(false);
+    });
+
+    connect(serialCom, &SerialCommunication::dataReceived, this, [this](const QByteArray &data)
             {
-                if (error != QSerialPort::NoError)
-                    emit this->error(serial.errorString());
+                if (ui->rbASCII->isChecked()) {
+                    ui->pteReceivedData->moveCursor(QTextCursor::End);
+                    ui->pteReceivedData->insertPlainText(QString::fromUtf8(data));
+                } else {
+                    ui->pteReceivedData->moveCursor(QTextCursor::End);
+                    ui->pteReceivedData->insertPlainText(data.toHex(' ').toUpper() + " ");
+                }
             });
+
+    ui->cbStopBit->addItem("One-Bit", QSerialPort::OneStop);
+    ui->cbStopBit->addItem("Two-Bit", QSerialPort::TwoStop);
+
+    ui->cbParity->addItem("NoParity", QSerialPort::NoParity);
+    ui->cbParity->addItem("EvenParity", QSerialPort::EvenParity);
+    ui->cbParity->addItem("MarkParity", QSerialPort::MarkParity);
+    ui->cbParity->addItem("OddParity", QSerialPort::OddParity);
+    ui->cbParity->addItem("SpaceParity", QSerialPort::SpaceParity);
 }
 
-void SerialCommunication :: connectPort(const SerialConfig &config)
+void MainWindow::baudRates()
 {
-    if(!serial.isOpen())
-    {
-        serial.setPortName(config.portName);
-        serial.setBaudRate(config.baudeRate);
-        serial.setDataBits(config.dataBits);
-        serial.setParity(config.parity);
-        serial.setStopBits(config.stopBits);
+    ui->cbBaudRate->addItem("1200", QSerialPort::Baud1200);
+    ui->cbBaudRate->addItem("2400", QSerialPort::Baud2400);
+    ui->cbBaudRate->addItem("9600", QSerialPort::Baud9600);
+    ui->cbBaudRate->addItem("19200", QSerialPort::Baud19200);
+    ui->cbBaudRate->addItem("38400", QSerialPort::Baud38400);
+    ui->cbBaudRate->addItem("57600", QSerialPort::Baud57600);
+    ui->cbBaudRate->addItem("115200", QSerialPort::Baud115200);
+    ui->cbBaudRate->setCurrentIndex(6);
+}
 
-        if (serial.open(QIODevice::ReadWrite)) {
-            emit connected();
-            qDebug() << "Serial port connected to" << config.portName;
-        }else {
-            qDebug() << "Failed to connect to port:" << serial.errorString();
-            emit error(serial.errorString());
+void MainWindow::onSerialConnected()
+{
+    qDebug() << "Serial connected!";
+}
+
+void MainWindow::onSerialError(const QString &msg)
+{
+    QMessageBox::critical(this, "Serial Error", msg);
+}
+
+void MainWindow::loadStyleSheet(const QString &path)
+{
+    QFile file(path);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        qDebug() << "Could not open stylesheet file:" << path;
+        return;
+    }
+    QTextStream stream(&file);
+    qApp->setStyleSheet(stream.readAll());
+    file.close();
+}
+
+void MainWindow::on_pbConnect_clicked()
+{
+    if (!serialCom->isConnected()) {
+        if (ui->cbComPort->currentIndex() < 0) {
+            QMessageBox::warning(this, "Port Error", "No COM port selected.");
+            return;
         }
+
+        SerialConfig cfg;
+        cfg.portName = ui->cbComPort->currentData().toString();
+        cfg.baudeRate = ui->cbBaudRate->currentData().toInt();
+        cfg.dataBits = QSerialPort::Data8;
+        cfg.parity = ui->cbParity->currentData().value<QSerialPort::Parity>();
+        cfg.stopBits = ui->cbStopBit->currentData().value<QSerialPort::StopBits>();
+
+        serialCom->connectPort(cfg);
+    } else {
+        serialCom->disconnectPort();
     }
 }
 
-void SerialCommunication::disconnectPort()
+void MainWindow::on_pbRefresh_clicked()
 {
-    if (serial.isOpen()){
-        serial.close();
-        qDebug() << "Serial port disconnected.";
-        emit disconnected();
+    ui->cbComPort->clear();
+    const auto ports = QSerialPortInfo::availablePorts();
+    for (const QSerialPortInfo &port : ports) {
+        QString fullName = port.portName() + " - " + port.description();
+        ui->cbComPort->addItem(fullName, port.portName());
     }
 }
 
-bool SerialCommunication :: isConnected() const
+void MainWindow::on_pbSend_clicked()
 {
-    return serial.isOpen();
-}
+    QString text = ui->leInputData->text();
+    if (text.isEmpty()) return;
 
-void SerialCommunication::sendCommand(const QByteArray &cmd)
-{
-    if (serial.isOpen())
-    {
-        serial.write(cmd);
+    if (ui->rbASCII->isChecked()) {
+        serialCom->sendCommand(text.toUtf8());
+    } else {
+        serialCom->sendCommand(QByteArray::fromHex(text.toUtf8()));
     }
+    ui->leInputData->clear();
 }
 
-void SerialCommunication::onReadyRead()
+void MainWindow::on_pbClear_clicked()
 {
-    QByteArray data = serial.readAll();
-    qDebug() << "Received: " << data;
-    emit dataReceived(data);
+    ui->pteReceivedData->clear();
 }
