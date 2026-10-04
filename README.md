@@ -21,6 +21,17 @@ The application simplifies embedded system development and hardware diagnostics 
 
 ---
 
+## Download
+
+The latest Windows executable can be downloaded from the [GitHub Releases](https://github.com/IamMosiow/qt-serial-communication/releases) page:
+
+* **Release**: [v0.5 - Windows Release](https://github.com/IamMosiow/qt-serial-communication/releases/tag/v0.5)
+* **Package**: `Serial_Communication_v0.5_Windows_x64.zip`
+
+This is a **portable release** containing the ready-to-run Windows 64-bit application bundled with all required Qt 6 runtime dependencies and platform plugins. No installation or Qt development environment is required—simply extract the ZIP archive and run `Serial_Communication.exe`.
+
+---
+
 ## Screenshot
 
 <p align="center">
