@@ -1,0 +1,50 @@
+name: Build and Verify
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            qt-arch: linux_gcc_64
+            cmake-gen: "Unix Makefiles"
+          - os: windows-latest
+            qt-arch: win64_msvc2022_64
+            cmake-gen: "Visual Studio 17 2022"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libxkbcommon-dev libx11-xcb-dev build-essential
+
+      - name: Setup Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.2'
+          host: ${{ runner.os == 'Windows' && 'windows' || 'linux' }}
+          target: 'desktop'
+          arch: ${{ matrix.qt-arch }}
+          modules: 'qtserialport'
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -S . -G "${{ matrix.cmake-gen }}" -DCMAKE_PREFIX_PATH="${{ env.Qt6_DIR }}"
+
+      - name: Build Application
+        run: |
+          cmake --build build --config Release

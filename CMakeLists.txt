@@ -13,29 +13,30 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets SerialPort)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets SerialPort)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+    src/main.cpp
+    src/communication/serialcommunication.h
+    src/communication/serialcommunication.cpp
+    src/logging/logger.h
+    src/logging/logger.cpp
+    src/ui/mainwindow.h
+    src/ui/mainwindow.cpp
+    src/ui/mainwindow.ui
+    src/ui/stylemanager.h
+    src/ui/stylemanager.cpp
+    src/utils/byteutils.h
+    resources/resources.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Serial_Communication
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        serialcommunication.h serialcommunication.cpp
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET Serial_Communication APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
     if(ANDROID)
         add_library(Serial_Communication SHARED
             ${PROJECT_SOURCES}
         )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         add_executable(Serial_Communication
             ${PROJECT_SOURCES}
@@ -43,13 +44,18 @@ else()
     endif()
 endif()
 
+target_include_directories(Serial_Communication PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/communication
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/logging
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ui
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/utils
+)
+
 target_link_libraries(Serial_Communication PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::SerialPort)
+    Qt${QT_VERSION_MAJOR}::SerialPort
+)
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
 if(${QT_VERSION} VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.Serial_Communication)
 endif()
